@@ -2,4 +2,5 @@
 .idea
 .code
 *.pyc
-
+**/__pycache__
+*.jpg

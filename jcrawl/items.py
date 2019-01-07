@@ -8,7 +8,7 @@
 import scrapy
 
 
-class JcrawlItem(scrapy.Item):
+class ClienItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     title = scrapy.Field()
@@ -18,4 +18,7 @@ class JcrawlItem(scrapy.Item):
     write_date = scrapy.Field()
     content = scrapy.Field()
     link = scrapy.Field()
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
+
 

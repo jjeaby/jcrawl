@@ -16,6 +16,10 @@ NEWSPIDER_MODULE = 'jcrawl.spiders'
 
 FEED_EXPORT_ENCODING = 'utf-8'
 
+ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
+# DOWNLOAD_DELAY = 2
+IMAGES_STORE = 'images'
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'jcrawl (+http://www.yourdomain.com)'
 
