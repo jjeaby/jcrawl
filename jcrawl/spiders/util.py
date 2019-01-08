@@ -3,22 +3,22 @@ import datetime
 def yesterdate():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(1)
-    return yesterday
+    return str(yesterday)
 
 def todaydate():
     today = backtodate(1)
-    return today
+    return str(today)
 
 def backtodate(day=1):
     today = datetime.date.today()
-    yesterday = today - datetime.timedelta(day)
-    return yesterday
+    beforeday = today - datetime.timedelta(day)
+    return str(beforeday)
 
 
 def koreaMMDDdate(year, month, day):
     dt = datetime.datetime(year, month, day)
     koreaMMDD = str(dt.month) + "월" + str(dt.day)+ "일("+ korea_weekday_label(dt.weekday()) + ")"
-    return koreaMMDD
+    return str(koreaMMDD)
 
 def korea_weekday_label(day):
     if day == 0 :
