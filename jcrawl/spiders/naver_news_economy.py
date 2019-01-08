@@ -21,15 +21,15 @@ class clien_park(scrapy.Spider):
     current_page = 0
 
     def parse(self, response):
-        for nav_page in range(0, 1):
+        for nav_page in range(1, 2):
             url = response.urljoin('/main/main.nhn?mode=LSD&mid=shm&sid1=101#&date=%2000:00:00&page=' + str(nav_page))
 
             yield scrapy.Request(url, callback=self.parse_list)
 
     def parse_list(self, response):
-
-
-        for sel in response.xpath("//div[@id='section_body']//li/dl/dt/a"):
+        print("*" * 100)
+        print(response.xpath("//*[@id='section_body']/ul/li/dl/dt//a").extract())
+        for sel in response.xpath("//*[@id='section_body']/ul/li/dl/dt//a"):
             print("*"*100)
             print(sel.extract())
             #
