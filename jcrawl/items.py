@@ -22,3 +22,14 @@ class ClienItem(scrapy.Item):
     images = scrapy.Field()
 
 
+class NaverNewsItem(scrapy.Item):
+    # define the fields for your item here like:
+    # name = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    write_date = scrapy.Field()
+    link = scrapy.Field()
+    image_urls = scrapy.Field()
+    images = scrapy.Field()
+
+

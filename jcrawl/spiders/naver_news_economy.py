@@ -1,81 +1,121 @@
 # -*- coding: utf-8 -*-
 
 import scrapy
+from requests import Request
 
-
-from jcrawl.items import ClienItem
+from jcrawl.items import NaverNewsItem
 from bs4 import BeautifulSoup
 import os
 import re
 import jcrawl.spiders.util as util
-
-
+from lxml import html
+import numpy as np
 
 
 class clien_park(scrapy.Spider):
     name = "naver_news_economy"
     allowed_domains = ["news.naver.com"]
     start_urls = [
-        "https://news.naver.com/main/main.nhn?mode=LSD&mid=shm&sid1=101#&date=%2000:00:00&page=1",
+        "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20190108&page=1",
     ]
+
     current_page = 0
 
     def parse(self, response):
-        for nav_page in range(1, 2):
-            url = response.urljoin('/main/main.nhn?mode=LSD&mid=shm&sid1=101#&date=%2000:00:00&page=' + str(nav_page))
+
+        for idx, sel in enumerate(response.xpath("//div[@id='main_content']/div[@class='paging']//text()")):
+            if (str(sel.extract())).strip() != "":
+                if (str(sel.extract())).strip() not in ["다음", "이전"] and (int(sel.extract())) > self.current_page:
+                    self.current_page = int(sel.extract())
+                print(sel.extract())
+                if (str(sel.extract())).strip() == "다음":
+                    print("*" * 100)
+                    url = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20190108&page=" + str(
+                        self.current_page + 1)
+                    print(url)
+                    yield scrapy.Request(url, callback=self.parse_get_list_count)
+
+        print("-" * 100)
+        print(self.current_page)
+        start_page = 1
+        if self.current_page > 0:
+            start_page = np.int(np.ceil(self.current_page / 10) - 1) * 10 + 1
+
+        print("start_page", start_page, "end_page", self.current_page + 1)
+        for page_number in range(start_page, self.current_page + 1, 1):
+            url = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20190108&page=" + str(
+                page_number)
+            print(url)
 
             yield scrapy.Request(url, callback=self.parse_list)
 
+
+
+    def parse_get_list_count(self, response):
+        print("+" * 100)
+        print(response.url)
+        for idx, sel in enumerate(response.xpath("//div[@id='main_content']/div[@class='paging']//text()")):
+            if (str(sel.extract())).strip() != "":
+                if (str(sel.extract())).strip() not in ["다음", "이전"] and (int(sel.extract())) > self.current_page:
+                    self.current_page = int(sel.extract())
+                print(sel.extract())
+
+                if (str(sel.extract())).strip() == "다음":
+                    url = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20190108&page=" + str(
+                        self.current_page + 1)
+                    print(url)
+                    yield scrapy.Request(url, callback=self.parse_get_list_count)
+
+        print("-" * 100)
+        print(self.current_page)
+        start_page = 1
+        if self.current_page > 0:
+            start_page = np.int(np.ceil(self.current_page / 10) - 1) * 10 + 1
+
+        print("start_page", start_page, "end_page", self.current_page + 1)
+        for page_number in range(start_page, self.current_page + 1, 1):
+            url = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date=20190108&page=" + str(
+                page_number)
+            print(url)
+
     def parse_list(self, response):
         print("*" * 100)
-        print(response.xpath("//*[@id='section_body']/ul/li/dl/dt//a").extract())
-        for sel in response.xpath("//*[@id='section_body']/ul/li/dl/dt//a"):
-            print("*"*100)
-            print(sel.extract())
-            #
-            # content_link = sel.xpath(
-            #     "//a[@class='list_subject' and contains(@href,'/service/board/park')]/@href").extract()
-            # write_date = sel.xpath(
-            #     "//div[@class='list_item symph_row  ']/div[@class='list_time']/span[@class='time popover']/span[@class='timestamp']/text()").extract()
-            # # print("+" * 100)
-            # # print(write_date)
-            #
-            # for idx, link in enumerate(content_link):
-            #
-            #
-            #     if str(write_date[idx]).split(" ")[0] != str(util.todaydate()):
-            #         continue
-            #
-            #     print("###1", str(write_date[idx]).split(" ")[0])
-            #     print("###2", str(util.todaydate()))
-            #     print("###3", content_link[idx])
-            #
-            #     content_link[idx] = response.urljoin(link)
-            #
-            #     yield scrapy.Request(content_link[idx], callback=self.parse_contents)
+
+        for sel in response.xpath("//li/dl/dt/a[starts-with(@href,'https://news.naver.com/main/read.nhn?mode=LS2D')]"):
+
+
+
+            content_link = sel.xpath("@href").extract()
+
+            title = str(sel.xpath("text()").extract())
+            title  = title.replace("\\n" ,"")
+            title  = title.replace("\\r" ,"")
+            title  = title.replace("\\t" ,"")
+
+            if title.strip() == "[' ', '']":
+                continue
+
+            print("+" * 100)
+            print(title.strip())
+            print(content_link[0])
+
+            yield scrapy.Request(content_link[0], callback=self.parse_contents)
 
     def parse_contents(self, response):
-        item = ClienItem()
-        item['title'] = self.tag_remove(response.xpath("//h3[@class='post_subject']/span").extract())
-        item['nick'] = self.tag_remove(response.xpath("//span[@class='nickname']").extract())
-        item['hits'] = self.tag_remove(response.xpath("//span[@class='view_count']").extract())
-        item['write_date'] = self.tag_remove(response.xpath("//div[@class='post_author']/span[1]").extract())
-        item['content'] = self.tag_remove(response.xpath("//div[@class='post_article fr-view']").extract())
+        item = NaverNewsItem()
+        item['title'] = self.tag_remove(response.xpath("//h3[@id='articleTitle']").extract())
+        item['write_date'] = self.tag_remove(response.xpath("//span[@class='t11']").extract())
+        item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
         item['link'] = response.url
 
         image_item = []
-        for elem in response.xpath("//div[@class='post_content']//img"):
+        for elem in response.xpath("//div[@id='articleBodyContents']//img"):
             img_url = elem.xpath("@src").extract_first()
             image_item.append(img_url)
 
         item['image_urls'] = image_item
-        # print("+" * 100)
-        # print(self.tag_remove(str(item['content'])))
 
         yield item
-
-
-
 
     def tag_remove(self, html):
         soup = BeautifulSoup(str(html), "html.parser")
@@ -91,7 +131,5 @@ class clien_park(scrapy.Spider):
 
         # cleantext = re.sub('[\\n]+[\s]+[\\n]+', '\n', cleantext)
         cleantext = cleantext.replace('\n', os.linesep).strip()
-
-
 
         return cleantext
