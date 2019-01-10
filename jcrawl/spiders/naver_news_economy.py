@@ -3,6 +3,8 @@ import asyncio
 
 import scrapy
 from requests import Request
+from scrapy.settings import Settings
+from scrapy.utils.project import get_project_settings
 
 from jcrawl.items import NaverNewsItem
 from bs4 import BeautifulSoup
@@ -29,8 +31,12 @@ class clien_park(scrapy.Spider):
 
     def parse(self, response):
 
+        settings = get_project_settings()
+        beforday = settings.get("BEFOREDAY") + 1
 
-        for before_day in range(0,1) :
+        print("bofor")
+        print(beforday)
+        for before_day in range(0,beforday) :
 
             current_page = 0
             crawl_date = util.backtodate(before_day).replace("-", "")

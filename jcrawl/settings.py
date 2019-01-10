@@ -21,6 +21,8 @@ ITEM_PIPELINES = {'jcrawl.pipelines.JcrawlImagesPipeline': 1}
 DOWNLOAD_DELAY = 0.1
 IMAGES_STORE = 'images'
 
+BEFOREDAY = 0
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'jcrawl (+http://www.yourdomain.com)'
 
