@@ -24,12 +24,13 @@ class clien_park(scrapy.Spider):
         naver_news_economy + "20190108&page=1",
     ]
 
+    write_file_name = "naver_news_economy.txt"
 
 
     def parse(self, response):
 
 
-        for before_day in range(0,380) :
+        for before_day in range(0,1) :
 
             current_page = 0
             crawl_date = util.backtodate(before_day).replace("-", "")
@@ -78,9 +79,6 @@ class clien_park(scrapy.Spider):
     def parse_list(self, response):
 
 
-        current_page = response.meta.get('current_page')
-        crawl_date = response.meta.get('crawl_date')
-
 
         print("*#" * 100)
         print(response.url)
@@ -112,6 +110,9 @@ class clien_park(scrapy.Spider):
         item['write_date'] = self.tag_remove(response.xpath("//span[@class='t11']").extract())
         item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
         item['link'] = response.url
+
+        util.write_file(finename=self.write_file_name, mode="a",write_text=str(item['title']  + "∥" + item['content']) )
+
 
         image_item = []
         for elem in response.xpath("//div[@id='articleBodyContents']//img"):

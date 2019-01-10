@@ -63,9 +63,12 @@ def make_random_word():
     random_word = ''.join(random.sample(random_word, len(random_word)))
     return str(random_word)
 
-def print_kwargs(**kwargs):
-    print(kwargs)
 
+
+def write_file(finename=None, mode="w", write_text=""):
+    fs = open(finename, mode=mode, encoding="utf-8")
+    fs.writelines(write_text + "\n")
+    fs.close()
 
 if __name__ == '__main__':
     print(todaydate())
@@ -80,9 +83,3 @@ if __name__ == '__main__':
     list_of_vars = [ "a", "b"]
     list_of_vars = ("apple", "banana", "cherry")
 
-    kwargs = {"arg3": 3, "arg2": 2, "arg1": 5}
-
-    print_kwargs(kwargs_1="Shark", kwargs_2=4.5, kwargs_3=True)
-
-    final_path = path.join(start_path, *kwargs)
-    print(final_path)
