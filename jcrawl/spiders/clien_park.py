@@ -18,7 +18,9 @@ class clien_park(scrapy.Spider):
     start_urls = [
         "https://www.clien.net/service/board/park?&od=T31&po=0",
     ]
-    current_page = 0
+
+    write_file_name = "output/clien_park.txt"
+
 
     def parse(self, response):
         for nav_page in range(0, 1):
@@ -58,7 +60,7 @@ class clien_park(scrapy.Spider):
         item['write_date'] = self.tag_remove(response.xpath("//div[@class='post_author']/span[1]").extract())
         item['content'] = self.tag_remove(response.xpath("//div[@class='post_article fr-view']").extract())
         item['link'] = response.url
-
+        item['site_name'] = self.name
         image_item = []
         for elem in response.xpath("//div[@class='post_content']//img"):
             img_url = elem.xpath("@src").extract_first()
@@ -67,6 +69,9 @@ class clien_park(scrapy.Spider):
         item['image_urls'] = image_item
         # print("+" * 100)
         # print(self.tag_remove(str(item['content'])))
+
+        util.write_file(finename=self.write_file_name, mode="a",write_text=str(item['title']  + "∥" + item['content']) )
+
 
         yield item
 

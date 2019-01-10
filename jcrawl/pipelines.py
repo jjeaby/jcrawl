@@ -36,6 +36,6 @@ class JcrawlImagesPipeline(ImagesPipeline):
         original_path = super(JcrawlImagesPipeline, self).file_path(request, response=None, info=None)
         sha1_and_extension = original_path.split('/')[1]  # delete 'full/' from the path
 
-        final_save_path = [str(util.todaydatehour())]
-        final_save_path.append(strftime("%Y-%m-%d_%H:%M:%S", gmtime()) + "_"+ sha1_and_extension)
-        return  os.path.sep.join(final_save_path)
+        final_save_path = [info.spider.name, str(util.todaydatehour())]
+        final_save_path.append(strftime("%Y-%m-%d_%H:%M:%S", gmtime()) + "_" + sha1_and_extension)
+        return os.path.sep.join(final_save_path)

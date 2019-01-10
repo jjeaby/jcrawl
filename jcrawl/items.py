@@ -20,6 +20,7 @@ class ClienItem(scrapy.Item):
     link = scrapy.Field()
     image_urls = scrapy.Field()
     images = scrapy.Field()
+    site_name = scrapy.Field()
 
 
 class NaverNewsItem(scrapy.Item):
@@ -31,5 +32,6 @@ class NaverNewsItem(scrapy.Item):
     link = scrapy.Field()
     image_urls = scrapy.Field()
     image_paths = scrapy.Field()
+    site_name = scrapy.Field()
 
 
