@@ -29,7 +29,7 @@ class clien_park(scrapy.Spider):
     def parse(self, response):
 
 
-        for before_day in range(0,2) :
+        for before_day in range(0,380) :
 
             current_page = 0
             crawl_date = util.backtodate(before_day).replace("-", "")
