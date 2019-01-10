@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import asyncio
 
 import scrapy
 from requests import Request
@@ -18,58 +19,69 @@ class clien_park(scrapy.Spider):
 
 
     naver_news_economy = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date="
-    crawl_date = util.todaydate()
 
     start_urls = [
         naver_news_economy + "20190108&page=1",
     ]
 
-    current_page = 0
+
 
     def parse(self, response):
 
 
         for before_day in range(0,2) :
 
-            self.current_page = 0
-            self.crawl_date = util.backtodate(before_day).replace("-", "")
-            url = self.naver_news_economy + self.crawl_date + "&page=1"
+            current_page = 0
+            crawl_date = util.backtodate(before_day).replace("-", "")
+            url = self.naver_news_economy + crawl_date + "&page=1"
 
             print("="*100)
-            print("====", self.crawl_date )
+            print("====", crawl_date )
             print("="*100)
 
-            yield scrapy.Request(url, callback=self.parse_get_list_count)
-
-
-
+            yield scrapy.Request(url, callback=self.parse_get_list_count, meta={'crawl_date': crawl_date, 'current_page': current_page})
 
     def parse_get_list_count(self, response):
+
+        current_page = response.meta.get('current_page')
+        crawl_date = response.meta.get('crawl_date')
+
+
+
         print("+" * 100)
         print(response.url)
+
+
+
         for idx, sel in enumerate(response.xpath("//div[@id='main_content']/div[@class='paging']//text()")):
             if (str(sel.extract())).strip() != "":
-                if (str(sel.extract())).strip() not in ["다음", "이전"] and (int(sel.extract())) > self.current_page:
-                    self.current_page = int(sel.extract())
+                if (str(sel.extract())).strip() not in ["다음", "이전"] and (int(sel.extract())) > current_page:
+                    current_page = int(sel.extract())
                 print(sel.extract())
 
                 if (str(sel.extract())).strip() == "다음":
-                    url = self.naver_news_economy + self.crawl_date + "&page=" + str(self.current_page + 1)
+                    url = self.naver_news_economy + crawl_date + "&page=" + str(current_page + 1)
                     print(url)
-                    yield scrapy.Request(url, callback=self.parse_get_list_count)
+                    yield scrapy.Request(url, callback=self.parse_get_list_count, meta={'crawl_date': crawl_date, 'current_page': current_page})
 
         print("-" * 100)
-        print(self.current_page)
+        print(current_page)
         start_page = 1
-        if self.current_page > 0:
-            start_page = np.int(np.ceil(self.current_page / 10) - 1) * 10 + 1
+        if current_page > 0:
+            start_page = np.int(np.ceil(current_page / 10) - 1) * 10 + 1
 
-        print("start_page", start_page, "end_page", self.current_page + 1)
-        for page_number in range(start_page, self.current_page + 1, 1):
-            url = self.naver_news_economy + self.crawl_date + "&page=" + str(page_number)
-            # yield scrapy.Request(url, callback=self.parse_list)
+        print("start_page", start_page, "end_page", current_page + 1)
+        for page_number in range(start_page, current_page + 1, 1):
+            url = self.naver_news_economy + crawl_date + "&page=" + str(page_number)
+            yield scrapy.Request(url, callback=self.parse_list, meta={'crawl_date': crawl_date, 'current_page': current_page})
 
     def parse_list(self, response):
+
+
+        current_page = response.meta.get('current_page')
+        crawl_date = response.meta.get('crawl_date')
+
+
         print("*#" * 100)
         print(response.url)
         print("*#" * 100)
