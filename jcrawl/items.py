@@ -19,7 +19,7 @@ class ClienItem(scrapy.Item):
     content = scrapy.Field()
     link = scrapy.Field()
     image_urls = scrapy.Field()
-    images = scrapy.Field()
+    image_paths = scrapy.Field()
     site_name = scrapy.Field()
 
 

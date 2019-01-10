@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import datetime
 import scrapy
 
 
@@ -23,7 +23,7 @@ class clien_park(scrapy.Spider):
 
 
     def parse(self, response):
-        for nav_page in range(0, 1):
+        for nav_page in range(0, 30000):
             url = response.urljoin('/service/board/park?&od=T31&po=' + str(nav_page))
 
             yield scrapy.Request(url, callback=self.parse_list)
@@ -40,13 +40,16 @@ class clien_park(scrapy.Spider):
 
             for idx, link in enumerate(content_link):
 
-
-                if str(write_date[idx]).split(" ")[0] != str(util.todaydate()):
-                    continue
-
                 print("###1", str(write_date[idx]).split(" ")[0])
                 print("###2", str(util.todaydate()))
                 print("###3", content_link[idx])
+
+
+                if  util.stringtodate((write_date[idx]).split(" ")[0]) < util.stringtodate(util.backtodate(370)):
+                    print("###4 BREAK")
+                    continue
+
+                print("###5 CONTINUE")
 
                 content_link[idx] = response.urljoin(link)
 
