@@ -30,6 +30,6 @@ class NaverNewsItem(scrapy.Item):
     write_date = scrapy.Field()
     link = scrapy.Field()
     image_urls = scrapy.Field()
-    images = scrapy.Field()
+    image_paths = scrapy.Field()
 
 

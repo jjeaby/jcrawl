@@ -29,7 +29,7 @@ class clien_park(scrapy.Spider):
     def parse(self, response):
 
 
-        for before_day in range(0,2) :
+        for before_day in range(0,370) :
 
 
             self.crawl_date = util.backtodate(before_day).replace("-", "")
@@ -66,8 +66,7 @@ class clien_park(scrapy.Spider):
 
         print("start_page", start_page, "end_page", self.current_page + 1)
         for page_number in range(start_page, self.current_page + 1, 1):
-            url = self.naver_news_economy + self.crawl_date + "&page=" + str(self.current_page + 1)
-
+            url = self.naver_news_economy + self.crawl_date + "&page=" + str(page_number)
             yield scrapy.Request(url, callback=self.parse_list)
 
     def parse_list(self, response):

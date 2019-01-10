@@ -1,4 +1,8 @@
 import datetime
+import os
+import random, string
+from os import path
+
 
 def yesterdate():
     today = datetime.date.today()
@@ -6,13 +10,19 @@ def yesterdate():
     return str(yesterday)
 
 def todaydate():
-    today = backtodate(1)
+    today = backtodate(0)
     return str(today)
 
 def backtodate(day=1):
     today = datetime.date.today()
     beforeday = today - datetime.timedelta(day)
     return str(beforeday)
+
+def todaydatehour():
+    today = datetime.datetime.now()
+    today_date = today.strftime("%Y%m%d%H")
+    return today_date
+
 
 
 def koreaMMDDdate(year, month, day):
@@ -36,7 +46,43 @@ def korea_weekday_label(day):
     elif day == 6 :
         return "일"
 
+def make_random_word():
+    UPP = random.SystemRandom().choice(string.ascii_uppercase)
+    LOW1 = random.SystemRandom().choice(string.ascii_lowercase)
+    LOW2 = random.SystemRandom().choice(string.ascii_lowercase)
+    LOW3 = random.SystemRandom().choice(string.ascii_lowercase)
+    LOW4 = random.SystemRandom().choice(string.ascii_lowercase)
+    DIG1 = random.SystemRandom().choice(string.digits)
+    DIG2 = random.SystemRandom().choice(string.digits)
+    DIG3 = random.SystemRandom().choice(string.digits)
+    DIG4 = random.SystemRandom().choice(string.digits)
+    SPEC1 = random.SystemRandom().choice('!@#$%^&*()')
+    SPEC2 = random.SystemRandom().choice('!@#$%^&*()')
+    random_word = None
+    random_word = UPP + LOW1 + LOW2 + LOW3 + LOW4 + DIG1 + DIG2 + DIG3 + DIG4+ SPEC1 + SPEC2
+    random_word = ''.join(random.sample(random_word, len(random_word)))
+    return str(random_word)
+
+def print_kwargs(**kwargs):
+    print(kwargs)
+
+
 if __name__ == '__main__':
     print(todaydate())
     print(yesterdate())
     print(koreaMMDDdate(2016,1,9))
+    print(make_random_word())
+    print(todaydatehour())
+
+
+    start_path = '/my/root/directory'
+
+    list_of_vars = [ "a", "b"]
+    list_of_vars = ("apple", "banana", "cherry")
+
+    kwargs = {"arg3": 3, "arg2": 2, "arg1": 5}
+
+    print_kwargs(kwargs_1="Shark", kwargs_2=4.5, kwargs_3=True)
+
+    final_path = path.join(start_path, *kwargs)
+    print(final_path)
