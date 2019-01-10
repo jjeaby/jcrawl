@@ -26,7 +26,7 @@ class clien_park(scrapy.Spider):
         naver_news_economy + "20190108&page=1",
     ]
 
-    write_file_name = "naver_news_economy.txt"
+    write_file_name = "output/naver_news_economy.txt"
 
 
     def parse(self, response):
