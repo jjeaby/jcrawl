@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
 
+from time import gmtime, strftime
+
 # Define your item pipelines here
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-import hashlib
 import os
-
 import scrapy
-from scrapy import Request
-from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
-from scrapy.utils.project import get_project_settings
-from spacy.util import to_bytes
+from scrapy.pipelines.images import ImagesPipeline
 
 import jcrawl.spiders.util as util
 
@@ -37,7 +34,8 @@ class JcrawlImagesPipeline(ImagesPipeline):
 
     def file_path(self, request, response=None, info=None):
         original_path = super(JcrawlImagesPipeline, self).file_path(request, response=None, info=None)
-        final_save_path = [ str(util.todaydatehour()) ]
-        sha1_and_extension =  original_path.split('/')[1]  # delete 'full/' from the path
-        final_save_path.append(sha1_and_extension)
-        return os.path.sep.join(final_save_path)
+        sha1_and_extension = original_path.split('/')[1]  # delete 'full/' from the path
+
+        final_save_path = [str(util.todaydatehour())]
+        final_save_path.append(strftime("%Y-%m-%d_%H:%M:%S", gmtime()) + "_"+ sha1_and_extension)
+        return  os.path.sep.join(final_save_path)

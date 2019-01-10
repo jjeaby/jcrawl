@@ -29,9 +29,9 @@ class clien_park(scrapy.Spider):
     def parse(self, response):
 
 
-        for before_day in range(0,370) :
+        for before_day in range(0,2) :
 
-
+            self.current_page = 0
             self.crawl_date = util.backtodate(before_day).replace("-", "")
             url = self.naver_news_economy + self.crawl_date + "&page=1"
 
@@ -67,10 +67,12 @@ class clien_park(scrapy.Spider):
         print("start_page", start_page, "end_page", self.current_page + 1)
         for page_number in range(start_page, self.current_page + 1, 1):
             url = self.naver_news_economy + self.crawl_date + "&page=" + str(page_number)
-            yield scrapy.Request(url, callback=self.parse_list)
+            # yield scrapy.Request(url, callback=self.parse_list)
 
     def parse_list(self, response):
-        print("*" * 100)
+        print("*#" * 100)
+        print(response.url)
+        print("*#" * 100)
 
         for sel in response.xpath("//li/dl/dt/a[starts-with(@href,'https://news.naver.com/main/read.nhn?mode=LS2D')]"):
 
