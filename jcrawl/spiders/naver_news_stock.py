@@ -21,7 +21,7 @@ class clien_park(scrapy.Spider):
         naver_news_economy + util.todaydate() + "page=1",
     ]
 
-    write_file_name = "output/" + name + ".txt"
+    write_file_name = "output/" + name + "_" + util.todaydate().replace("-", "") + ".txt"
 
     def parse(self, response):
 

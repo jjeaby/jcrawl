@@ -1,24 +1,20 @@
 # -*- coding: utf-8 -*-
-import asyncio
 
+import re
+
+import numpy as np
+import os
 import scrapy
-from requests import Request
-from scrapy.settings import Settings
+from bs4 import BeautifulSoup
 from scrapy.utils.project import get_project_settings
 
-from jcrawl.items import NaverNewsItem
-from bs4 import BeautifulSoup
-import os
-import re
 import jcrawl.spiders.util as util
-from lxml import html
-import numpy as np
+from jcrawl.items import NaverNewsItem
 
 
 class clien_park(scrapy.Spider):
     name = "naver_news_economy"
     allowed_domains = ["news.naver.com"]
-
 
     naver_news_economy = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=259&sid1=101&date="
 
@@ -26,8 +22,7 @@ class clien_park(scrapy.Spider):
         naver_news_economy + "20190108&page=1",
     ]
 
-    write_file_name = "output/naver_news_economy.txt"
-
+    write_file_name = "output/" + name + "_" + util.todaydate().replace("-", "") + ".txt"
 
     def parse(self, response):
 
@@ -36,29 +31,25 @@ class clien_park(scrapy.Spider):
 
         print("bofor")
         print(beforday)
-        for before_day in range(0,beforday) :
-
+        for before_day in range(0, beforday):
             current_page = 0
             crawl_date = util.backtodate(before_day).replace("-", "")
             url = self.naver_news_economy + crawl_date + "&page=1"
 
-            print("="*100)
-            print("====", crawl_date )
-            print("="*100)
+            print("=" * 100)
+            print("====", crawl_date)
+            print("=" * 100)
 
-            yield scrapy.Request(url, callback=self.parse_get_list_count, meta={'crawl_date': crawl_date, 'current_page': current_page})
+            yield scrapy.Request(url, callback=self.parse_get_list_count,
+                                 meta={'crawl_date': crawl_date, 'current_page': current_page})
 
     def parse_get_list_count(self, response):
 
         current_page = response.meta.get('current_page')
         crawl_date = response.meta.get('crawl_date')
 
-
-
         print("+" * 100)
         print(response.url)
-
-
 
         for idx, sel in enumerate(response.xpath("//div[@id='main_content']/div[@class='paging']//text()")):
             if (str(sel.extract())).strip() != "":
@@ -69,7 +60,8 @@ class clien_park(scrapy.Spider):
                 if (str(sel.extract())).strip() == "다음":
                     url = self.naver_news_economy + crawl_date + "&page=" + str(current_page + 1)
                     print(url)
-                    yield scrapy.Request(url, callback=self.parse_get_list_count, meta={'crawl_date': crawl_date, 'current_page': current_page})
+                    yield scrapy.Request(url, callback=self.parse_get_list_count,
+                                         meta={'crawl_date': crawl_date, 'current_page': current_page})
 
         print("-" * 100)
         print(current_page)
@@ -80,11 +72,10 @@ class clien_park(scrapy.Spider):
         print("start_page", start_page, "end_page", current_page + 1)
         for page_number in range(start_page, current_page + 1, 1):
             url = self.naver_news_economy + crawl_date + "&page=" + str(page_number)
-            yield scrapy.Request(url, callback=self.parse_list, meta={'crawl_date': crawl_date, 'current_page': current_page})
+            yield scrapy.Request(url, callback=self.parse_list,
+                                 meta={'crawl_date': crawl_date, 'current_page': current_page})
 
     def parse_list(self, response):
-
-
 
         print("*#" * 100)
         print(response.url)
@@ -92,14 +83,12 @@ class clien_park(scrapy.Spider):
 
         for sel in response.xpath("//li/dl/dt/a[starts-with(@href,'https://news.naver.com/main/read.nhn?mode=LS2D')]"):
 
-
-
             content_link = sel.xpath("@href").extract()
 
             title = str(sel.xpath("text()").extract())
-            title  = title.replace("\\n" ,"")
-            title  = title.replace("\\r" ,"")
-            title  = title.replace("\\t" ,"")
+            title = title.replace("\\n", "")
+            title = title.replace("\\r", "")
+            title = title.replace("\\t", "")
 
             if title.strip() == "[' ', '']":
                 continue
@@ -117,8 +106,7 @@ class clien_park(scrapy.Spider):
         item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
         item['link'] = response.url
 
-        util.write_file(finename=self.write_file_name, mode="a",write_text=str(item['title']  + "∥" + item['content']) )
-
+        util.write_file(finename=self.write_file_name, mode="a", write_text=str(item['title'] + "∥" + item['content']))
 
         image_item = []
         for elem in response.xpath("//div[@id='articleBodyContents']//img"):
