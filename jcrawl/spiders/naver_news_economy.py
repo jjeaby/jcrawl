@@ -106,7 +106,7 @@ class clien_park(scrapy.Spider):
         item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
         item['link'] = response.url
 
-        util.write_file(finename=self.write_file_name, mode="a", write_text=str(item['title'] + "∥" + item['content']))
+        util.write_file(finename=self.write_file_name, mode="a", write_text=str(item['title'] + " ∥ " + item['content']))
 
         image_item = []
         for elem in response.xpath("//div[@id='articleBodyContents']//img"):
