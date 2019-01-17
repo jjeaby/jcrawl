@@ -106,7 +106,7 @@ class clien_park(scrapy.Spider):
         item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
         item['link'] = response.url
 
-        if(len(item['content'].strip())) > 0
+        if(len(item['content'].strip())) > 0:
             util.write_file(finename=self.write_file_name, mode="a",
                             write_text=str(item['title'] + " ∥ " + item['content']))
 
