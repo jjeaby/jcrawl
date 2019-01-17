@@ -13,7 +13,7 @@ from jcrawl.items import NaverNewsItem
 
 
 class clien_park(scrapy.Spider):
-    name = "naver_news_economy"
+    name = "naver_news_economy_common"
     allowed_domains = ["news.naver.com"]
 
     naver_news_economy = "https://news.naver.com/main/list.nhn?mode=LS2D&mid=shm&sid2=263&sid1=101&date="
