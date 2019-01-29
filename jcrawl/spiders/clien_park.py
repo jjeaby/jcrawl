@@ -16,7 +16,8 @@ class clien_park(scrapy.Spider):
         "https://www.clien.net/service/board/park?&od=T31&po=0",
     ]
 
-    write_file_name = "output/clien_park.txt"
+    write_file_name = "output/" + name + "_" + util.todaydate().replace("-", "") + ".txt"
+
 
     def parse(self, response):
         for nav_page in range(0, 500):
