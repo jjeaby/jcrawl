@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
-import datetime
-import scrapy
-
-
-from jcrawl.items import ClienItem
-from bs4 import BeautifulSoup
-import os
 import re
+
+import os
+import scrapy
+from bs4 import BeautifulSoup
+
 import jcrawl.spiders.util as util
-
-
+from jcrawl.items import ClienItem
 
 
 class clien_park(scrapy.Spider):
@@ -21,9 +18,8 @@ class clien_park(scrapy.Spider):
 
     write_file_name = "output/clien_park.txt"
 
-
     def parse(self, response):
-        for nav_page in range(0, 30000):
+        for nav_page in range(0, 500):
             url = response.urljoin('/service/board/park?&od=T31&po=' + str(nav_page))
 
             yield scrapy.Request(url, callback=self.parse_list)
@@ -42,10 +38,10 @@ class clien_park(scrapy.Spider):
 
                 print("###1", str(write_date[idx]).split(" ")[0])
                 print("###2", str(util.todaydate()))
+                print("###2", str(util.backtodate(1)))
                 print("###3", content_link[idx])
 
-
-                if  util.stringtodate((write_date[idx]).split(" ")[0]) < util.stringtodate(util.backtodate(370)):
+                if util.stringtodate((write_date[idx]).split(" ")[0]) != util.stringtodate(util.backtodate(1)):
                     print("###4 BREAK")
                     continue
 
@@ -73,13 +69,10 @@ class clien_park(scrapy.Spider):
         # print("+" * 100)
         # print(self.tag_remove(str(item['content'])))
 
-        util.write_file(finename=self.write_file_name, mode="a",write_text=str(item['title']  + " ∥ " + item['content']) )
-
+        util.write_file(finename=self.write_file_name, mode="a",
+                        write_text=str(item['title'] + " ∥ " + item['content']))
 
         yield item
-
-
-
 
     def tag_remove(self, html):
         soup = BeautifulSoup(str(html), "html.parser")
@@ -95,7 +88,5 @@ class clien_park(scrapy.Spider):
 
         # cleantext = re.sub('[\\n]+[\s]+[\\n]+', '\n', cleantext)
         cleantext = cleantext.replace('\n', os.linesep).strip()
-
-
 
         return cleantext
