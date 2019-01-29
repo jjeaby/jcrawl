@@ -71,7 +71,7 @@ class clien_park(scrapy.Spider):
         # print(self.tag_remove(str(item['content'])))
 
         util.write_file(finename=self.write_file_name, mode="a",
-                        write_text=str(item['title'] + " ∥ " + item['content']))
+                        write_text=str(item['title'] + " ∥ " + item['content']).replace("\\n", " "))
 
         yield item
 
