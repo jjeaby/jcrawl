@@ -17,7 +17,8 @@ NEWSPIDER_MODULE = 'jcrawl.spiders'
 FEED_EXPORT_ENCODING = 'utf-8'
 
 # ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
-ITEM_PIPELINES = {'jcrawl.pipelines.JcrawlImagesPipeline': 1}
+# 이미지 저장을 위해선 아래 주석 해제 
+#ITEM_PIPELINES = {'jcrawl.pipelines.JcrawlImagesPipeline': 1}
 DOWNLOAD_DELAY = 0.1
 IMAGES_STORE = 'images'
 
