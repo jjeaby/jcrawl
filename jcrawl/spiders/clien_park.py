@@ -55,10 +55,10 @@ class clien_park(scrapy.Spider):
     def parse_contents(self, response):
         item = ClienItem()
         item['title'] = self.tag_remove(response.xpath("//h3[@class='post_subject']/span").extract())
-        item['nick'] = self.tag_remove(response.xpath("//span[@class='nickname']").extract())
+        item['nick'] = self.tag_remove(response.xpath("//div[@class='post_info']//span[@class='nickname']/span").extract())
         item['hits'] = self.tag_remove(response.xpath("//span[@class='view_count']").extract())
         item['write_date'] = self.tag_remove(response.xpath("//div[@class='post_author']/span[1]").extract())
-        item['content'] = self.tag_remove(response.xpath("//div[@class='post_article fr-view']").extract())
+        item['content'] = self.tag_remove(response.xpath("//article/div[@class='post_article']").extract())
         item['link'] = response.url
         item['site_name'] = self.name
         image_item = []
