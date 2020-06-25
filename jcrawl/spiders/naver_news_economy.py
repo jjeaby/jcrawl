@@ -104,6 +104,12 @@ class clien_park(scrapy.Spider):
         item['title'] = self.tag_remove(response.xpath("//h3[@id='articleTitle']").extract())
         item['write_date'] = self.tag_remove(response.xpath("//span[@class='t11']").extract())
         item['content'] = self.tag_remove(response.xpath("//div[@id='articleBodyContents']").extract())
+        item['content'] = item['content'].replace("\\n", ' ')
+        item['content'] = re.sub("[\s]+", " ", item['content'])
+        item['content'] = item['content'].replace("function _flash_removeCallback() {}", " ")
+        item['content'] = re.sub("[\s]+", " ", item['content'])
+        item['content'] = item['content'].replace("// flash 오류를 우회하기 위한 함수 추가", " ")
+        item['content'] = re.sub("[\s]+", " ", item['content'])
         item['link'] = response.url
 
         util.write_file(finename=self.write_file_name, mode="a", write_text=str(item['title'] + " ∥ " + item['content']))
